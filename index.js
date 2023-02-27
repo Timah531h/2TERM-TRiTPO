@@ -6,8 +6,8 @@ import { registerValidation } from './validations/auth.js';
 import { validationResult } from 'express-validator';
 import UserModel from './models/User.js';
 
-mongoose.set('strictQuery', false);
-mongoose.connect('mongodb+srv://admin:wwwwww@cluster0.eh4mr1g.mongodb.net/?retryWrites=true&w=majority'
+//mongoose.set('strictQuery', false);
+mongoose.connect('mongodb+srv://admin:wwwwww@cluster0.eh4mr1g.mongodb.net/blog?retryWrites=true&w=majority'
 ).then(() => console.log('DB ok')
 ).catch((err) => console.log('DB error', err));
 
@@ -17,7 +17,8 @@ app.use(express.json());
 
 
 app.post('/auth/register', registerValidation, async (req, res ) => {
-    const errors = validationResult(req);
+    try{
+        const errors = validationResult(req);
     if(!errors.isEmpty()){
         return res.status(400).json(errors.array());
     }
@@ -31,12 +32,33 @@ app.post('/auth/register', registerValidation, async (req, res ) => {
         email: req.body.email,
         fullName: req.body.fullName,
         avatarUrl: req.body.avatarUrl,
-        passwordHash: req.body.password,
+        passwordHash,
     });
 
     const user = await doc.save();
 
-    res.json({user});
+    const token = jwt.sing(
+        {
+            _id: user._id,
+        },
+        'secret123',
+        {
+        expresIn: '30d',
+        },
+    );
+
+    res.json({
+       ... user,
+       token, 
+    });
+
+    
+    } catch(err){
+        console.log(err);
+        res.status(500).json({
+            massage: 'Не удалось зарегистрироваться',
+        });
+    }
 });
 
 app.listen(4444, (err) => {
