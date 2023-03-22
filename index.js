@@ -7,7 +7,7 @@ import { validationResult } from 'express-validator';
 import UserModel from './models/User.js';
 
 //mongoose.set('strictQuery', false);
-mongoose.connect('mongodb+srv://admin:wwwwww@cluster0.eh4mr1g.mongodb.net/blog?retryWrites=true&w=majority'
+mongoose.connect('mongodb+srv://admin:wwwwww@cluster0.fnp9ooh.mongodb.net/blog?retryWrites=true&w=majority'
 ).then(() => console.log('DB ok')
 ).catch((err) => console.log('DB error', err));
 
